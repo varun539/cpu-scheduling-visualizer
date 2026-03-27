@@ -51,3 +51,16 @@ if st.button("Run Scheduling"):
         results, timeline = round_robin_scheduling(processes, time_quantum)
 
     st.write(results)
+    import pandas as pd
+from visualization.gantt_chart import draw_gantt_chart
+
+    df = pd.DataFrame(results)
+    st.dataframe(df)
+
+    avg_wait = df["waiting_time"].mean()
+    avg_tat = df["turnaround_time"].mean()
+
+    st.metric("Average Waiting Time", round(avg_wait, 2))
+    st.metric("Average Turnaround Time", round(avg_tat, 2))
+
+    draw_gantt_chart(timeline, algorithm)
