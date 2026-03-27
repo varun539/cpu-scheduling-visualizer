@@ -22,3 +22,32 @@ for i in range(num_processes):
         "burst": burst,
         "priority": priority
     })
+from algorithms.fcfs import fcfs_scheduling
+from algorithms.sjf import sjf_scheduling
+from algorithms.priority import priority_scheduling
+from algorithms.round_robin import round_robin_scheduling
+
+algorithm = st.selectbox(
+    "Select Scheduling Algorithm",
+    ["FCFS", "SJF", "Priority", "Round Robin"]
+)
+
+time_quantum = 2
+if algorithm == "Round Robin":
+    time_quantum = st.number_input("Time Quantum", min_value=1, value=2)
+
+if st.button("Run Scheduling"):
+
+    if algorithm == "FCFS":
+        results, timeline = fcfs_scheduling(processes)
+
+    elif algorithm == "SJF":
+        results, timeline = sjf_scheduling(processes)
+
+    elif algorithm == "Priority":
+        results, timeline = priority_scheduling(processes)
+
+    elif algorithm == "Round Robin":
+        results, timeline = round_robin_scheduling(processes, time_quantum)
+
+    st.write(results)
