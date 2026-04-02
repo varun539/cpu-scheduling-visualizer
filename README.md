@@ -99,7 +99,7 @@ Both systems involve efficient scheduling and optimal allocation of limited reso
 👥 Team Members
 Varun B
 Azim Sadath
-Kirthick
+Kirthick S
 🎓 Academic Purpose
 
 This project was developed as part of an Operating Systems course to demonstrate scheduling concepts through practical implementation and visualization.
