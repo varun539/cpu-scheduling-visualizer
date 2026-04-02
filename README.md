@@ -45,21 +45,33 @@ Pandas
 Matplotlib
 📂 Project Structure
 cpu-scheduling-visualizer
+
+
 │
 ├── algorithms/
+
+
 │   ├── fcfs.py
 │   ├── sjf.py
 │   ├── priority.py
 │   └── round_robin.py
 │
+
+
 ├── visualization/
 │   └── gantt_chart.py
 │
+
+
 ├── ui/
 │   └── app.py
 │
+
+
 ├── requirements.txt
 └── README.md
+
+
 🚀 How to Run Locally
 
 Clone the repository:
