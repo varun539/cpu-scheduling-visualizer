@@ -32,14 +32,18 @@ st.subheader("📝 Enter Process Details")
 for i in range(num_processes):
     pid = f"P{i+1}"
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
 
     with col1:
         arrival = st.number_input(f"{pid} Arrival Time", min_value=0, key=f"a{i}")
     with col2:
         burst = st.number_input(f"{pid} Burst Time", min_value=1, key=f"b{i}")
-    with col3:
+
+    # Only show priority when needed
+    if algorithm == "Priority":
         priority = st.number_input(f"{pid} Priority", min_value=1, key=f"p{i}")
+    else:
+        priority = 0  # default value
 
     processes.append({
         "pid": pid,
