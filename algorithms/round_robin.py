@@ -1,36 +1,24 @@
 def round_robin_scheduling(processes, time_quantum):
-    """
-    Round Robin Scheduling Algorithm
-    """
-
     from collections import deque
 
-    # Copy processes to avoid modifying original
     processes = [p.copy() for p in processes]
-
-    # Sort by arrival time
     processes.sort(key=lambda x: x["arrival"])
 
-    queue = deque()
+    n = len(processes)
     time = 0
     i = 0
 
-    n = len(processes)
+    queue = deque()
 
     remaining_time = {p["pid"]: p["burst"] for p in processes}
     completion_time = {}
 
     timeline = []
 
-    # Add first processes to queue
-    while i < n and processes[i]["arrival"] <= time:
-        queue.append(processes[i])
-        i += 1
-
-    if not queue:
-        time = processes[0]["arrival"]
-        queue.append(processes[0])
-        i = 1
+    # Start from first arrival
+    time = processes[0]["arrival"]
+    queue.append(processes[0])
+    i = 1
 
     while queue:
 
@@ -39,26 +27,32 @@ def round_robin_scheduling(processes, time_quantum):
         pid = current["pid"]
         arrival = current["arrival"]
 
+        # Execute
         exec_time = min(time_quantum, remaining_time[pid])
-
         start_time = time
         time += exec_time
         remaining_time[pid] -= exec_time
 
         timeline.append((pid, start_time, time))
 
-        # Add newly arrived processes
-        while i < n and processes[i]["arrival"] <= time:
-            queue.append(processes[i])
-            i += 1
-
-        # If process not finished, push back to queue
+        # 🔥 IMPORTANT: First re-add current if not finished
         if remaining_time[pid] > 0:
             queue.append(current)
         else:
             completion_time[pid] = time
 
-    # Calculate results
+        # 🔥 THEN add newly arrived processes
+        while i < n and processes[i]["arrival"] <= time:
+            queue.append(processes[i])
+            i += 1
+
+        # If queue empty, jump to next arrival
+        if not queue and i < n:
+            time = processes[i]["arrival"]
+            queue.append(processes[i])
+            i += 1
+
+    # Results
     results = []
 
     for p in processes:
