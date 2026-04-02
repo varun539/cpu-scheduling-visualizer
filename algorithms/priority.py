@@ -6,27 +6,26 @@ def priority_scheduling(processes):
 
     processes = sorted(processes, key=lambda x: (x["arrival"], x["priority"]))
 
-    current_time = 0
-    completed = []
+    time = 0
+    results = []
     timeline = []
 
-    for process in processes:
+    for p in processes:
+        pid = p["pid"]
+        arrival = p["arrival"]
+        burst = p["burst"]
+        priority = p["priority"]
 
-        pid = process["pid"]
-        arrival = process["arrival"]
-        burst = process["burst"]
-        priority = process["priority"]
+        if time < arrival:
+            time = arrival
 
-        if current_time < arrival:
-            current_time = arrival
+        start = time
+        finish = start + burst
 
-        start_time = current_time
-        finish_time = start_time + burst
+        waiting_time = start - arrival
+        turnaround_time = finish - arrival
 
-        waiting_time = start_time - arrival
-        turnaround_time = finish_time - arrival
-
-        completed.append({
+        results.append({
             "pid": pid,
             "arrival": arrival,
             "burst": burst,
@@ -35,8 +34,7 @@ def priority_scheduling(processes):
             "turnaround_time": turnaround_time
         })
 
-        timeline.append((pid, start_time, finish_time))
+        timeline.append((pid, start, finish))
+        time = finish
 
-        current_time = finish_time
-
-    return completed, timeline
+    return results, timeline
