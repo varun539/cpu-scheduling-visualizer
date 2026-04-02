@@ -1,58 +1,55 @@
 def round_robin_scheduling(processes, time_quantum):
     from collections import deque
 
-    processes = [p.copy() for p in processes]
-    processes.sort(key=lambda x: x["arrival"])
+    # Sort by arrival
+    processes = sorted(processes, key=lambda x: x["arrival"])
 
     n = len(processes)
-    time = 0
-    i = 0
-
-    queue = deque()
-
-    remaining_time = {p["pid"]: p["burst"] for p in processes}
-    completion_time = {}
+    remaining = {p["pid"]: p["burst"] for p in processes}
+    completion = {}
 
     timeline = []
+    queue = deque()
 
-    # Start from first arrival
     time = processes[0]["arrival"]
-    queue.append(processes[0])
-    i = 1
+    i = 0
+
+    # Add initial processes
+    while i < n and processes[i]["arrival"] <= time:
+        queue.append(processes[i])
+        i += 1
 
     while queue:
 
         current = queue.popleft()
-
         pid = current["pid"]
-        arrival = current["arrival"]
 
         # Execute
-        exec_time = min(time_quantum, remaining_time[pid])
-        start_time = time
+        exec_time = min(time_quantum, remaining[pid])
+        start = time
         time += exec_time
-        remaining_time[pid] -= exec_time
+        remaining[pid] -= exec_time
 
-        timeline.append((pid, start_time, time))
+        timeline.append((pid, start, time))
 
-        # 🔥 IMPORTANT: First re-add current if not finished
-        if remaining_time[pid] > 0:
-            queue.append(current)
-        else:
-            completion_time[pid] = time
-
-        # 🔥 THEN add newly arrived processes
+        # Add newly arrived processes FIRST
         while i < n and processes[i]["arrival"] <= time:
             queue.append(processes[i])
             i += 1
 
-        # If queue empty, jump to next arrival
+        # Then re-add current process if not finished
+        if remaining[pid] > 0:
+            queue.append(current)
+        else:
+            completion[pid] = time
+
+        # If queue empty → jump to next arrival
         if not queue and i < n:
             time = processes[i]["arrival"]
             queue.append(processes[i])
             i += 1
 
-    # Results
+    # Build results
     results = []
 
     for p in processes:
@@ -60,7 +57,7 @@ def round_robin_scheduling(processes, time_quantum):
         arrival = p["arrival"]
         burst = p["burst"]
 
-        tat = completion_time[pid] - arrival
+        tat = completion[pid] - arrival
         wt = tat - burst
 
         results.append({
