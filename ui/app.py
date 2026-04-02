@@ -1,6 +1,10 @@
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# 🔥 Ensure project root is added (robust for Streamlit Cloud)
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, ".."))
+sys.path.insert(0, project_root)
 
 import streamlit as st
 import pandas as pd
@@ -52,7 +56,7 @@ algorithm = st.selectbox(
     ["FCFS", "SJF", "Priority", "Round Robin"]
 )
 
-# 🔥 Explanation (Commit 6)
+# ===== EXPLANATION =====
 if algorithm == "FCFS":
     st.info("FCFS executes processes in order of arrival.")
 
@@ -88,7 +92,7 @@ if st.button("▶️ Run Scheduling"):
 
     # ===== RESULTS =====
     df = pd.DataFrame(results)
-    st.dataframe(df)
+    st.dataframe(df, use_container_width=True)
 
     avg_wait = df["waiting_time"].mean()
     avg_tat = df["turnaround_time"].mean()
@@ -99,5 +103,6 @@ if st.button("▶️ Run Scheduling"):
 
     st.divider()
 
+    # ===== GANTT CHART =====
     st.subheader("📈 Gantt Chart")
-    draw_gantt_chart(timeline, algorithm)
+    draw_gantt_chart(timeline, f"{algorithm} Scheduling")
