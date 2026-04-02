@@ -22,39 +22,7 @@ st.markdown("Simulate CPU scheduling algorithms with performance metrics and Gan
 
 st.divider()
 
-# ===== INPUT =====
-num_processes = st.number_input("Number of Processes", min_value=1, max_value=10, value=3)
-
-processes = []
-
-st.subheader("📝 Enter Process Details")
-
-for i in range(num_processes):
-    pid = f"P{i+1}"
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        arrival = st.number_input(f"{pid} Arrival Time", min_value=0, key=f"a{i}")
-    with col2:
-        burst = st.number_input(f"{pid} Burst Time", min_value=1, key=f"b{i}")
-
-    # Only show priority when needed
-    if algorithm == "Priority":
-        priority = st.number_input(f"{pid} Priority", min_value=1, key=f"p{i}")
-    else:
-        priority = 0  # default value
-
-    processes.append({
-        "pid": pid,
-        "arrival": arrival,
-        "burst": burst,
-        "priority": priority
-    })
-
-st.divider()
-
-# ===== ALGORITHM SELECT =====
+# ===== ALGORITHM SELECT (MOVE UP) =====
 algorithm = st.selectbox(
     "⚙️ Select Scheduling Algorithm",
     ["FCFS", "SJF", "Priority", "Round Robin"]
@@ -73,6 +41,40 @@ elif algorithm == "Priority":
 elif algorithm == "Round Robin":
     st.info("Round Robin assigns fixed time slices to each process.")
 
+st.divider()
+
+# ===== INPUT =====
+num_processes = st.number_input("Number of Processes", min_value=1, max_value=10, value=3)
+
+processes = []
+
+st.subheader("📝 Enter Process Details")
+
+for i in range(num_processes):
+    pid = f"P{i+1}"
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        arrival = st.number_input(f"{pid} Arrival Time", min_value=0, key=f"a{i}")
+    with col2:
+        burst = st.number_input(f"{pid} Burst Time", min_value=1, key=f"b{i}")
+
+    # Show priority ONLY if needed
+    if algorithm == "Priority":
+        priority = st.number_input(f"{pid} Priority", min_value=1, key=f"p{i}")
+    else:
+        priority = 0
+
+    processes.append({
+        "pid": pid,
+        "arrival": arrival,
+        "burst": burst,
+        "priority": priority
+    })
+
+st.divider()
+
 # ===== TIME QUANTUM =====
 time_quantum = 2
 if algorithm == "Round Robin":
@@ -83,7 +85,6 @@ st.divider()
 # ===== RUN BUTTON =====
 if st.button("▶️ Run Scheduling"):
 
-    # Run selected algorithm
     if algorithm == "FCFS":
         results, timeline = fcfs_scheduling(processes)
 
@@ -96,13 +97,12 @@ if st.button("▶️ Run Scheduling"):
     elif algorithm == "Round Robin":
         results, timeline = round_robin_scheduling(processes, time_quantum)
 
-    # ===== RESULTS TABLE =====
+    # ===== RESULTS =====
     st.subheader("📊 Results Table")
 
     df = pd.DataFrame(results)
     st.dataframe(df, use_container_width=True)
 
-    # ===== METRICS =====
     avg_wait = df["waiting_time"].mean()
     avg_tat = df["turnaround_time"].mean()
 
@@ -112,6 +112,6 @@ if st.button("▶️ Run Scheduling"):
 
     st.divider()
 
-    # ===== GANTT CHART =====
+    # ===== GANTT =====
     st.subheader("📈 Gantt Chart Visualization")
     draw_gantt_chart(timeline, f"{algorithm} Scheduling")
