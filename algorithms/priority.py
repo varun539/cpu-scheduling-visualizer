@@ -1,8 +1,4 @@
 def priority_scheduling(processes):
-    """
-    Non-preemptive Priority Scheduling
-    Lower number = higher priority
-    """
 
     processes = sorted(processes, key=lambda x: (x["arrival"], x["priority"]))
 
@@ -22,16 +18,16 @@ def priority_scheduling(processes):
         start = time
         finish = start + burst
 
-        waiting_time = start - arrival
-        turnaround_time = finish - arrival
+        wt = start - arrival
+        tat = finish - arrival
 
         results.append({
             "pid": pid,
             "arrival": arrival,
             "burst": burst,
             "priority": priority,
-            "waiting_time": waiting_time,
-            "turnaround_time": turnaround_time
+            "waiting_time": wt,
+            "turnaround_time": tat
         })
 
         timeline.append((pid, start, finish))
